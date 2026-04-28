@@ -49,4 +49,6 @@ app.get("/peages", async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Scraper running"));
+// 🔥 CORRECTION IMPORTANTE POUR RAILWAY
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Scraper running on port ${PORT}`));
