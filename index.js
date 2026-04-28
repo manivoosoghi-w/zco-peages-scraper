@@ -5,7 +5,7 @@ import fs from "fs";
 const app = express();
 app.use(express.json());
 
-// Chemin du Chromium que NOUS installons
+// Chromium installé par notre script
 const CHROME_PATH = "/opt/render/project/src/chromium/chrome-linux/chrome";
 
 app.get("/peages", async (req, res) => {
@@ -15,7 +15,6 @@ app.get("/peages", async (req, res) => {
     return res.json({ error: "missing parameters" });
   }
 
-  // Vérifier que Chromium existe
   if (!fs.existsSync(CHROME_PATH)) {
     return res.json({ error: "Chromium not installed on Render" });
   }
