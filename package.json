@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "postinstall": "bash install-chromium.sh"
+    "postinstall": "bash install-chromium.sh",
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "playwright": "^1.41.0"
+    "playwright-core": "^1.41.0"
   }
 }
