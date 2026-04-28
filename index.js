@@ -1,22 +1,16 @@
 import express from "express";
 import playwright from "playwright-core";
-import fs from "fs";
 
 const app = express();
 app.use(express.json());
 
-// Chromium installé par notre script
-const CHROME_PATH = "/opt/render/project/src/chromium/chrome-linux/chrome";
+const CHROME_PATH = "/usr/bin/google-chrome-stable";
 
 app.get("/peages", async (req, res) => {
   const { from, to } = req.query;
 
   if (!from || !to) {
     return res.json({ error: "missing parameters" });
-  }
-
-  if (!fs.existsSync(CHROME_PATH)) {
-    return res.json({ error: "Chromium not installed on Render" });
   }
 
   try {
