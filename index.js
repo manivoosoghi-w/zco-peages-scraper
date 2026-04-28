@@ -1,25 +1,12 @@
 import express from "express";
-import { chromium } from "playwright";
+import playwright from "playwright-core";
 import fs from "fs";
 
 const app = express();
 app.use(express.json());
 
-function findChrome() {
-  const base = "/opt/render/.cache/ms-playwright/chromium-1217/chrome-linux64";
-  const paths = [
-    `${base}/chrome`,
-    `${base}/chrome-wrapper`
-  ];
-
-  for (const p of paths) {
-    if (fs.existsSync(p)) {
-      return p;
-    }
-  }
-
-  return null;
-}
+// Chemin du Chromium que NOUS installons
+const CHROME_PATH = "/opt/render/project/src/chromium/chrome-linux/chrome";
 
 app.get("/peages", async (req, res) => {
   const { from, to } = req.query;
@@ -28,16 +15,15 @@ app.get("/peages", async (req, res) => {
     return res.json({ error: "missing parameters" });
   }
 
+  // Vérifier que Chromium existe
+  if (!fs.existsSync(CHROME_PATH)) {
+    return res.json({ error: "Chromium not installed on Render" });
+  }
+
   try {
-    const chromePath = findChrome();
-
-    if (!chromePath) {
-      return res.json({ error: "Chrome not found on Render" });
-    }
-
-    const browser = await chromium.launch({
+    const browser = await playwright.chromium.launch({
       headless: true,
-      executablePath: chromePath,
+      executablePath: CHROME_PATH,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
