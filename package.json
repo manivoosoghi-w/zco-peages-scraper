@@ -2,6 +2,9 @@
   "name": "zco-peages-scraper",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "postinstall": "npx playwright install chromium"
+  },
   "dependencies": {
     "express": "^4.18.2",
     "playwright": "^1.41.0"
