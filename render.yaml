@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: zco-peages-scraper
+    env: node
+    buildCommand: |
+      npm install
+      npx playwright install chromium
+    startCommand: node index.js
+    plan: free
