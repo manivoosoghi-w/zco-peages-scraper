@@ -1,10 +1,8 @@
 import express from "express";
-import playwright from "playwright-core";
+import { chromium } from "playwright";
 
 const app = express();
 app.use(express.json());
-
-const CHROME_PATH = "/usr/bin/google-chrome-stable";
 
 app.get("/peages", async (req, res) => {
   const { from, to } = req.query;
@@ -14,9 +12,8 @@ app.get("/peages", async (req, res) => {
   }
 
   try {
-    const browser = await playwright.chromium.launch({
+    const browser = await chromium.launch({
       headless: true,
-      executablePath: CHROME_PATH,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -30,8 +27,8 @@ app.get("/peages", async (req, res) => {
       waitUntil: "networkidle"
     });
 
-    await page.fill("#itineraire_depart", from);
-    await page.fill("#itineraire_arrivee", to);
+    await page.fill("#itineraire_depart", String(from));
+    await page.fill("#itineraire_arrivee", String(to));
 
     await page.click("#itineraire_submit");
 
@@ -41,7 +38,11 @@ app.get("/peages", async (req, res) => {
 
     await browser.close();
 
-    res.json({ from, to, toll: price });
+    res.json({
+      from,
+      to,
+      toll: price
+    });
 
   } catch (e) {
     res.json({ error: e.toString() });
