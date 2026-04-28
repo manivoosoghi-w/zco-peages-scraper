@@ -4,9 +4,6 @@ import { chromium } from "playwright";
 const app = express();
 app.use(express.json());
 
-// Railway installe Google Chrome ici :
-const CHROME_PATH = "/usr/bin/google-chrome-stable";
-
 app.get("/peages", async (req, res) => {
   const { from, to } = req.query;
 
@@ -17,13 +14,10 @@ app.get("/peages", async (req, res) => {
   try {
     const browser = await chromium.launch({
       headless: true,
-      executablePath: CHROME_PATH, // 🔥 IMPORTANT POUR RAILWAY
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--disable-software-rasterizer"
+        "--disable-dev-shm-usage"
       ]
     });
 
@@ -55,6 +49,5 @@ app.get("/peages", async (req, res) => {
   }
 });
 
-// 🔥 OBLIGATOIRE POUR RAILWAY
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Scraper running on port ${PORT}`));
