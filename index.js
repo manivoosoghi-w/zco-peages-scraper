@@ -12,10 +12,12 @@ app.get("/peages", async (req, res) => {
   }
 
   try {
-    const browser = await chromium.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+   const browser = await chromium.launch({
+      headless: true,
+      executablePath: "/opt/render/.cache/ms-playwright/chromium-1217/chrome-linux64/chrome",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
+
 
 
     const page = await browser.newPage();
