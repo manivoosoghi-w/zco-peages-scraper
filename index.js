@@ -1,5 +1,5 @@
 import express from "express";
-import { chromium } from "playwright";
+import playwright from "playwright-core";
 
 const app = express();
 app.use(express.json());
@@ -12,19 +12,15 @@ app.get("/peages", async (req, res) => {
   }
 
   try {
- const browser = await chromium.launch({
-  headless: true,
-  args: [
-    "--no-sandbox",
-    "--disable-setuid-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-gpu",
-    "--disable-software-rasterizer"
-  ]
-});
-
-
-
+    const browser = await playwright.chromium.launch({
+      headless: true,
+      executablePath: "/usr/bin/google-chrome-stable",
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage"
+      ]
+    });
 
     const page = await browser.newPage();
 
@@ -43,11 +39,7 @@ app.get("/peages", async (req, res) => {
 
     await browser.close();
 
-    res.json({
-      from,
-      to,
-      toll: price
-    });
+    res.json({ from, to, toll: price });
 
   } catch (e) {
     res.json({ error: e.toString() });
