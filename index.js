@@ -1,8 +1,25 @@
 import express from "express";
-import playwright from "playwright-core";
+import { chromium } from "playwright";
+import fs from "fs";
 
 const app = express();
 app.use(express.json());
+
+function findChrome() {
+  const base = "/opt/render/.cache/ms-playwright/chromium-1217/chrome-linux64";
+  const paths = [
+    `${base}/chrome`,
+    `${base}/chrome-wrapper`
+  ];
+
+  for (const p of paths) {
+    if (fs.existsSync(p)) {
+      return p;
+    }
+  }
+
+  return null;
+}
 
 app.get("/peages", async (req, res) => {
   const { from, to } = req.query;
@@ -12,9 +29,15 @@ app.get("/peages", async (req, res) => {
   }
 
   try {
-    const browser = await playwright.chromium.launch({
+    const chromePath = findChrome();
+
+    if (!chromePath) {
+      return res.json({ error: "Chrome not found on Render" });
+    }
+
+    const browser = await chromium.launch({
       headless: true,
-      executablePath: "/usr/bin/google-chrome-stable",
+      executablePath: chromePath,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
