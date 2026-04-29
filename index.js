@@ -23,7 +23,10 @@ app.get("/peages", async (req, res) => {
     await page.goto("https://autoroute-eco.fr", { waitUntil: "networkidle" });
 
     // Nouveaux sélecteurs 2026
+    await page.waitForSelector('input[name="depart"]', { timeout: 15000 });
     await page.fill('input[name="depart"]', from);
+
+    await page.waitForSelector('input[name="arrivee"]', { timeout: 15000 });
     await page.fill('input[name="arrivee"]', to);
 
     await page.click('button[type="submit"]');
