@@ -1,14 +1,10 @@
 services:
   - type: web
-    name: zco-peages-scraper
-    env: node
+    name: zco-peages-scraper-api
+    env: docker
     plan: free
-    buildCommand: |
-      apt-get update
-      apt-get install -y wget gnupg unzip
-      wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-      sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-      apt-get update
-      apt-get install -y google-chrome-stable
-      npm install
-    startCommand: node index.js
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
