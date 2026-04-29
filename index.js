@@ -13,24 +13,32 @@ app.get("/peages", async (req, res) => {
   }
 
   try {
-    const browser = await chromium.launch();
+    const browser = await chromium.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    });
+
     const page = await browser.newPage();
 
-    await page.goto("https://autoroute-eco.fr", { waitUntil: "domcontentloaded" });
+    await page.goto("https://autoroute-eco.fr", { waitUntil: "networkidle" });
 
-    await page.fill("#depart", from);
-    await page.fill("#arrivee", to);
+    // Nouveaux sélecteurs 2026
+    await page.fill('input[name="depart"]', from);
+    await page.fill('input[name="arrivee"]', to);
 
-    await page.click("#calcul");
+    await page.click('button[type="submit"]');
 
-    await page.waitForSelector("#resultat");
+    // Attendre les résultats
+    await page.waitForSelector("#resultats .prix", { timeout: 20000 });
 
-    const total = await page.$eval("#resultat .prix", el => el.textContent.trim());
+    const total = await page.$eval("#resultats .prix", el =>
+      el.textContent.trim().replace("€", "").replace(",", ".")
+    );
 
     await browser.close();
 
     return res.json({
-      total: parseFloat(total.replace("€", "").replace(",", ".")),
+      total: parseFloat(total),
       details: []
     });
 
