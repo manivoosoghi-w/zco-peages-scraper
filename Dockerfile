@@ -10,6 +10,9 @@ COPY package*.json ./
 # Installer les dépendances Node
 RUN npm install
 
+# Installer les navigateurs Playwright (OBLIGATOIRE SUR RENDER)
+RUN npx playwright install --with-deps
+
 # Copier le code
 COPY . .
 
