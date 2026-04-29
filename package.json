@@ -1,13 +1,13 @@
 {
-  "name": "zco-peages-scraper",
+  "name": "zco-peages-scraper-api",
   "version": "1.0.0",
+  "main": "index.js",
   "type": "module",
-  "scripts": {
-    "postinstall": "npx playwright install chromium",
-    "start": "node index.js"
-  },
   "dependencies": {
     "express": "^4.18.2",
-    "playwright": "^1.41.0"
+    "cors": "^2.8.5"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }
