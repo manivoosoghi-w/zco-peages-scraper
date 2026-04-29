@@ -1,53 +1,37 @@
 import express from "express";
-import { chromium } from "playwright";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get("/peages", async (req, res) => {
-  const { from, to } = req.query;
+  const from = req.query.from;
+  const to = req.query.to;
 
   if (!from || !to) {
-    return res.json({ error: "missing parameters" });
+    return res.status(400).json({
+      error: "Paramètres 'from' et 'to' obligatoires",
+    });
   }
 
   try {
-    const browser = await chromium.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage"
-      ]
+    // Pour l'instant : 0 (ton Worker gère)
+    const total = 0;
+
+    return res.json({
+      total,
+      details: [],
     });
-
-    const page = await browser.newPage();
-
-    await page.goto("https://www.autoroutes.fr/fr/itineraire", {
-      waitUntil: "networkidle"
+  } catch (err) {
+    return res.status(500).json({
+      error: "Erreur interne Render",
+      details: `${err}`,
     });
-
-    await page.fill("#itineraire_depart", String(from));
-    await page.fill("#itineraire_arrivee", String(to));
-
-    await page.click("#itineraire_submit");
-
-    await page.waitForSelector(".resultat-peage");
-
-    const price = await page.$eval(".resultat-peage", el => el.innerText);
-
-    await browser.close();
-
-    res.json({
-      from,
-      to,
-      toll: price
-    });
-
-  } catch (e) {
-    res.json({ error: e.toString() });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Scraper running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log("API péages Render démarrée sur port " + PORT);
+});
